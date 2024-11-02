@@ -119,7 +119,7 @@ def update(dt):
         bullet.x = randint(playground.xMargins[0], playground.xMargins[1])
         bullet.y = playground.yBorders[0]
     
-    # 
+    # death
     if bullet.x - bulletWidth/2 < player.x < bullet.x + bulletWidth/2 and\
     bullet.y - bulletHeight/2 < player.y < bullet.y + bulletHeight/2:
         exit()
