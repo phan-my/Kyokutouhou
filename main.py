@@ -26,6 +26,8 @@ def movement(sprite, area) -> None:
         distance = 2
     else:
         distance = 4
+    
+    # define sprite in boundaries of area
     inLeft = sprite.x > area.xMargins[0]
     inDown = sprite.y < area.yMargins[1]
     inUp = sprite.y > area.yMargins[0]
@@ -41,19 +43,29 @@ def movement(sprite, area) -> None:
         sprite.x += distance
 
     # diagonal movement same speed as vertical/horizontal
+    # diagonal movement scraping border results in slowdown
     diagonal = distance*cos(PI/4) - distance
-    if keyboard.left and keyboard.down and (inLeft and inDown):
-        sprite.x -= diagonal
-        sprite.y += diagonal
-    if keyboard.left and keyboard.up and (inLeft and inUp):
-        sprite.x -= diagonal
-        sprite.y -= diagonal
-    if keyboard.right and keyboard.up and (inRight and inUp):
-        sprite.x += diagonal
-        sprite.y -= diagonal
-    if keyboard.right and keyboard.down and (inRight and inDown):
-        sprite.x += diagonal
-        sprite.y += diagonal
+
+    if keyboard.left and keyboard.down:
+        if inDown:
+            sprite.y += diagonal
+        if inLeft:
+            sprite.x -= diagonal
+    if keyboard.left and keyboard.up:
+        if inLeft:
+            sprite.x -= diagonal
+        if inUp:
+            sprite.y -= diagonal
+    if keyboard.right and keyboard.up:
+        if inRight:
+            sprite.x += diagonal
+        if inUp:
+            sprite.y -= diagonal
+    if keyboard.right and keyboard.down:
+        if inRight:
+            sprite.x += diagonal
+        if inDown:
+            sprite.y += diagonal
 
 def straight_bullet(sprite, speed) -> None:
     sprite.y += speed
@@ -82,6 +94,7 @@ bullet.x = randint(playground.xMargins[0], playground.xMargins[1])
 def draw():
     background.draw()
     player.draw()
+    bullet.draw()
     bullet.draw()
 
 def update(dt):
