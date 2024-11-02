@@ -44,7 +44,7 @@ def straight_bullet(sprite, speed) -> None:
     sprite.y += speed
 
 player = Actor("reimu")
-background = Actor("black-background")
+background = Actor("proportional-background")
 bullet = Actor("bullet-vertical.png")
 bullet.x = randint(0, WIDTH)
 
