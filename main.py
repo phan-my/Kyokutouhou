@@ -2,6 +2,7 @@ import math
 from math import cos
 import pygame
 import pgzrun
+from random import randint
 PI = 3.141592653589793238462643
 
 TITLE = "Kyokutouhou"
@@ -39,16 +40,26 @@ def movement(sprite) -> None:
         sprite.x += diagonal
         sprite.y += diagonal
 
+def straight_bullet(sprite, speed) -> None:
+    sprite.y += speed
+
 player = Actor("reimu")
 background = Actor("black-background-800x600")
 bullet = Actor("bullet-vertical-3x6.png")
+bullet.x = randint(0, WIDTH)
 
 def draw():
     background.draw()
     player.draw()
+    bullet.draw()
 
 def update(dt):
     movement(player)
+    if bullet.y < HEIGHT:
+        straight_bullet(bullet, 3.5)
+    else:
+        bullet.x = randint(0, WIDTH)
+        bullet.y = 0
 
 pgzrun.go()
 print("Hello, World!")
