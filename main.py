@@ -6,7 +6,6 @@ from random import randint
 from dataclasses import dataclass
 PI = 3.141592653589793238462643
 
-# clockwise from top left
 @dataclass
 class Rectangle:
     xMargins: (int, int)
