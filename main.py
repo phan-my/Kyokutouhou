@@ -45,7 +45,7 @@ def straight_bullet(sprite, speed) -> None:
 
 player = Actor("reimu")
 background = Actor("black-background-800x600")
-bullet = Actor("bullet-vertical-6x12.png")
+bullet = Actor("bullet-vertical.png")
 bullet.x = randint(0, WIDTH)
 
 def draw():
