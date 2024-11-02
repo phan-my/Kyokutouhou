@@ -1,5 +1,5 @@
 # Kyokutouhou
-A Computer Science school project in Python
+Kyokutouhou is a fan game based on ZUN's Touhou Project.
 
 ## Installation
 ### Debian
