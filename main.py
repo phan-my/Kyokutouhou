@@ -8,7 +8,7 @@ PI = 3.141592653589793238462643
 
 # clockwise from top left
 @dataclass
-class Square:
+class Rectangle:
     xMargins: (int, int)
     yMargins: (int, int)
     xBorders: (int, int)
@@ -74,7 +74,9 @@ TITLE = "Kyokutouhou"
 WIDTH = 800
 HEIGHT = 600
 
-playground = Square(
+background = Actor("proportional-background")
+
+playground = Rectangle(
     (50 + 16, 470 - 16),
     (30 + 32, 560 - 32),
     (50, 470),
@@ -85,10 +87,21 @@ playgroundWidth = playground.xMargins[1] - playground.xMargins[0]
 playgroundHeight = playground.yMargins[1] - playground.yMargins[0]
 
 player = Actor("reimu")
+playerWidth = 32
+playerHeight = 64
 player.x = playground.xMargins[0] + (playgroundWidth/2)
 player.y = playground.yMargins[1] - 24
-background = Actor("proportional-background")
+
+playerHitbox = Rectangle(
+    (player.x, player.x),
+    (player.y, player.y),
+    (player.x - playerWidth/2, player.x + playerWidth/2),
+    (player.y - playerHeight/2, player.y + playerHeight/2),
+)
+
 bullet = Actor("bullet-vertical.png")
+bulletWidth = 6
+bulletHeight = 12
 bullet.x = randint(playground.xMargins[0], playground.xMargins[1])
 
 def draw():
@@ -105,6 +118,11 @@ def update(dt):
     else:
         bullet.x = randint(playground.xMargins[0], playground.xMargins[1])
         bullet.y = playground.yBorders[0]
+    
+    # 
+    if bullet.x - bulletWidth/2 < player.x < bullet.x + bulletWidth/2 and\
+    bullet.y - bulletHeight/2 < player.y < bullet.y + bulletHeight/2:
+        exit()
 
 pgzrun.go()
 print("Hello, World!")
