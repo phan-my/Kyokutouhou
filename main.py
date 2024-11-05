@@ -1,5 +1,7 @@
 import math
 from math import cos
+import time
+from time import sleep
 import pygame
 import pgzrun
 from random import randint
@@ -74,20 +76,19 @@ WIDTH = 800
 HEIGHT = 600
 
 background = Actor("proportional-background")
+player = Actor("reimu")
+playerWidth = 32
+playerHeight = 64
 
 playground = Rectangle(
-    (50 + 16, 470 - 16),
-    (30 + 32, 560 - 32),
+    (50 + playerWidth/2, 470 - playerWidth/2),
+    (30 + playerHeight/2, 560 - playerHeight/2),
     (50, 470),
     (30, 560)
 )
 
 playgroundWidth = playground.xMargins[1] - playground.xMargins[0]
 playgroundHeight = playground.yMargins[1] - playground.yMargins[0]
-
-player = Actor("reimu")
-playerWidth = 32
-playerHeight = 64
 player.x = playground.xMargins[0] + (playgroundWidth/2)
 player.y = playground.yMargins[1] - 24
 
@@ -98,30 +99,58 @@ playerHitbox = Rectangle(
     (player.y - playerHeight/2, player.y + playerHeight/2),
 )
 
-bullet = Actor("bullet-vertical.png")
+Bullets = []
+
+for i in range(500):
+    Bullets.append(Actor("bullet-vertical.png"))
+    Bullets[i].x = randint(playground.xBorders[0], playground.xBorders[1])
+
 bulletWidth = 6
 bulletHeight = 12
-bullet.x = randint(playground.xMargins[0], playground.xMargins[1])
 
 def draw():
     background.draw()
     player.draw()
-    bullet.draw()
-    bullet.draw()
+
+    # https://electronstudio.github.io/pygame-zero-book/chapters/shooter.html
+    for bullet in Bullets:
+        bullet.draw()
+i = 0
+start = time.time()
+end = time.time()
+elapsed = end - start
+
+def update_straight_bullet(i):
+    if Bullets[i].y < playground.yBorders[1]:
+        straight_bullet(Bullets[i], 6)
+    else:
+        Bullets[i].x = 9001
+        # Bullets[i].y = playground.yBorders[0]
 
 def update(dt):
+    global bullet, i, start, end, elapsed
     movement(player, playground)
 
-    if bullet.y < playground.yBorders[1]:
-        straight_bullet(bullet, 3.5)
-    else:
-        bullet.x = randint(playground.xMargins[0], playground.xMargins[1])
-        bullet.y = playground.yBorders[0]
-    
-    # death
-    if bullet.x - bulletWidth/2 < player.x < bullet.x + bulletWidth/2 and\
-    bullet.y - bulletHeight/2 < player.y < bullet.y + bulletHeight/2:
-        exit()
+    # clock.schedule_interval(update_straight_bullet, 2.0)
+    bulletsOnScreen = 50
 
+    for j in range(bulletsOnScreen):
+        update_straight_bullet(i+j)
+
+    # death
+    for j in range(bulletsOnScreen):
+        if Bullets[i+j].x - bulletWidth/2 < player.x < Bullets[i+j].x + bulletWidth/2 and\
+        Bullets[i+j].y - bulletHeight/2 < player.y < Bullets[i+j].y + bulletHeight/2:
+            exit()
+
+    if elapsed >= 1.65 and i < 500 - 2 - 1:
+        Bullets[i].x = 9001
+        i += bulletsOnScreen
+        start = time.time()
+        elapsed = 0
+    end = time.time()
+    elapsed = end - start
+    
+# clock.schedule(draw_nth_straight_bullet, 0.5)
 pgzrun.go()
 print("Hello, World!")
