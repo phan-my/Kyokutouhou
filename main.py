@@ -101,7 +101,9 @@ playerHitbox = Rectangle(
 
 Bullets = []
 
-for i in range(500):
+bullets = 1024
+
+for i in range(bullets):
     Bullets.append(Actor("bullet-vertical.png"))
     Bullets[i].x = randint(playground.xBorders[0], playground.xBorders[1])
 
@@ -122,7 +124,7 @@ elapsed = end - start
 
 def update_straight_bullet(i):
     if Bullets[i].y < playground.yBorders[1]:
-        straight_bullet(Bullets[i], 6)
+        straight_bullet(Bullets[i], 5)
     else:
         Bullets[i].x = 9001
         # Bullets[i].y = playground.yBorders[0]
@@ -143,8 +145,7 @@ def update(dt):
         Bullets[i+j].y - bulletHeight/2 < player.y < Bullets[i+j].y + bulletHeight/2:
             exit()
 
-    if elapsed >= 1.65 and i < 500 - 2 - 1:
-        Bullets[i].x = 9001
+    if elapsed >= 2 and i < bullets - 2 - 1:
         i += bulletsOnScreen
         start = time.time()
         elapsed = 0
