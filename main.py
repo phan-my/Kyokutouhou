@@ -117,6 +117,7 @@ def draw():
     # https://electronstudio.github.io/pygame-zero-book/chapters/shooter.html
     for bullet in Bullets:
         bullet.draw()
+
 i = 0
 start = time.time()
 end = time.time()
@@ -130,8 +131,14 @@ def update_straight_bullet(i):
         # Bullets[i].y = playground.yBorders[0]
 
 def update(dt):
-    global bullet, i, start, end, elapsed
+    global player, bullet, i, start, end, elapsed
     movement(player, playground)
+    
+    # Documentation: Built-in Objects
+    if keyboard.lshift:
+        player.image = "reimu-focus"
+    if not keyboard.lshift:
+        player.image = "reimu"
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
     bulletsOnScreen = 50
