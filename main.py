@@ -1,5 +1,5 @@
 import math
-from math import cos
+from math import cos, fmod
 import time
 from time import sleep
 import pygame
@@ -101,7 +101,7 @@ playerHitbox = Rectangle(
 
 Bullets = []
 
-bullets = 1024
+bullets = 1024*10
 
 for i in range(bullets):
     Bullets.append(Actor("bullet-vertical.png"))
@@ -130,8 +130,9 @@ def update_straight_bullet(i):
         Bullets[i].x = 9001
         # Bullets[i].y = playground.yBorders[0]
 
+start_level = time.time()
 def update(dt):
-    global player, bullet, i, start, end, elapsed
+    global player, bullet, i, start, end, elapsed, start_level
     movement(player, playground)
     
     # Documentation: Built-in Objects
@@ -141,10 +142,17 @@ def update(dt):
         player.image = "reimu"
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
-    bulletsOnScreen = 50
+    bulletsOnScreen = 512
 
-    for j in range(bulletsOnScreen):
-        update_straight_bullet(i+j)
+    lap = time.time()
+    elapsed_lap = lap - start_level
+
+    k = 0
+
+    while k < bulletsOnScreen:
+        if k*(elapsed/bulletsOnScreen) > 3:
+            update_straight_bullet(i+k)
+        k += 1
 
     # death
     for j in range(bulletsOnScreen):
@@ -152,7 +160,10 @@ def update(dt):
         Bullets[i+j].y - bulletHeight/2 < player.y < Bullets[i+j].y + bulletHeight/2:
             exit()
 
-    if elapsed >= 2 and i < bullets - 2 - 1:
+    if elapsed >= 100 and i < bullets - 2 - 1:
+        print(elapsed)
+        for j in range(bulletsOnScreen):
+            Bullets[i+j].x = 9001
         i += bulletsOnScreen
         start = time.time()
         elapsed = 0
