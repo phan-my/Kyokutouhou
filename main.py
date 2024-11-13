@@ -1,3 +1,5 @@
+from bulletpatterns import *
+from mechanics import *
 import math
 from math import cos, fmod
 import time
@@ -21,57 +23,6 @@ class Rectangle:
     br: (int, int)
     bl: (int, int)
     """
-
-# `-> None' is py equiv of void, stackoverflow/questions/36797282
-def movement(sprite, area) -> None:
-    if keyboard.lshift:
-        distance = 2.5
-    else:
-        distance = 5
-    
-    # define sprite in boundaries of area
-    inLeft = sprite.x > area.xMargins[0]
-    inDown = sprite.y < area.yMargins[1]
-    inUp = sprite.y > area.yMargins[0]
-    inRight = sprite.x < area.xMargins[1]
-
-    if keyboard.left and inLeft:
-        sprite.x -= distance
-    if keyboard.down and inDown:
-        sprite.y += distance
-    if keyboard.up and inUp:
-        sprite.y -= distance
-    if keyboard.right and inRight:
-        sprite.x += distance
-
-    # diagonal movement same speed as vertical/horizontal
-    # diagonal movement scraping border results in slowdown
-    diagonal = distance*cos(PI/4) - distance
-
-    if keyboard.left and keyboard.down:
-        if inDown:
-            sprite.y += diagonal
-        if inLeft:
-            sprite.x -= diagonal
-    if keyboard.left and keyboard.up:
-        if inLeft:
-            sprite.x -= diagonal
-        if inUp:
-            sprite.y -= diagonal
-    if keyboard.right and keyboard.up:
-        if inRight:
-            sprite.x += diagonal
-        if inUp:
-            sprite.y -= diagonal
-    if keyboard.right and keyboard.down:
-        if inRight:
-            sprite.x += diagonal
-        if inDown:
-            sprite.y += diagonal
-
-# straight-falling bullet with parameter sprite and speed
-def straight_bullet(sprite, speed) -> None:
-    sprite.y += speed
 
 TITLE = "Kyokutouhou"
 WIDTH = 800
@@ -125,44 +76,28 @@ start = time.time()
 end = time.time()
 elapsed = end - start
 
-def update_straight_bullet(i):
-    if Bullets[i].y < playground.yBorders[1]:
-        straight_bullet(Bullets[i], 4.5)
-    else:
-        Bullets[i].x = 9001
-        # Bullets[i].y = playground.yBorders[0]
-
 start_level = time.time()
 def update(dt):
     global player, bullet, i, start, end, elapsed, start_level
     movement(player, playground)
-    
-    # Documentation: Built-in Objects
-    if keyboard.lshift:
-        player.image = "reimu-focus"
-    if not keyboard.lshift:
-        player.image = "reimu"
+    reimu_slowdown(player)
 
-    # clock.schedule_interval(update_straight_bullet, 2.0)
-    bulletsOnScreen = 1024
 
     lap = time.time()
     elapsed_lap = lap - start_level
 
+
+    # clock.schedule_interval(update_straight_bullet, 2.0)
+    bulletsOnScreen = 1024
     k = 0
     interval = 2
-
     while k < bulletsOnScreen:
         if (k/interval)*(elapsed/bulletsOnScreen) >= interval:
             print((k/interval)*(elapsed/bulletsOnScreen))
-            update_straight_bullet(k)
+            update_straight_bullet(Bullets, k, 4.5, playground)
         k += 1
 
-    # death
-    for j in range(bulletsOnScreen):
-        if Bullets[i+j].x - bulletWidth/2 < player.x < Bullets[i+j].x + bulletWidth/2 and\
-        Bullets[i+j].y - bulletHeight/2 < player.y < Bullets[i+j].y + bulletHeight/2:
-            exit()
+    death(Bullets, i, player, bulletsOnScreen, bulletWidth, bulletHeight)
 
     if elapsed >= 50 and i < bullets - 2 - 1:
         # print(elapsed)
