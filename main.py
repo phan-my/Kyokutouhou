@@ -8,6 +8,7 @@ from random import randint
 from dataclasses import dataclass
 PI = 3.141592653589793238462643
 
+# struct-like object for hitboxes and playground
 @dataclass
 class Rectangle:
     xMargins: (int, int)
@@ -21,12 +22,12 @@ class Rectangle:
     bl: (int, int)
     """
 
-# py equiv of void, stackoverflow/questions/36797282
+# `-> None' is py equiv of void, stackoverflow/questions/36797282
 def movement(sprite, area) -> None:
     if keyboard.lshift:
-        distance = 2
+        distance = 2.5
     else:
-        distance = 4
+        distance = 5
     
     # define sprite in boundaries of area
     inLeft = sprite.x > area.xMargins[0]
@@ -68,6 +69,7 @@ def movement(sprite, area) -> None:
         if inDown:
             sprite.y += diagonal
 
+# straight-falling bullet with parameter sprite and speed
 def straight_bullet(sprite, speed) -> None:
     sprite.y += speed
 
@@ -125,7 +127,7 @@ elapsed = end - start
 
 def update_straight_bullet(i):
     if Bullets[i].y < playground.yBorders[1]:
-        straight_bullet(Bullets[i], 5)
+        straight_bullet(Bullets[i], 4.5)
     else:
         Bullets[i].x = 9001
         # Bullets[i].y = playground.yBorders[0]
@@ -142,16 +144,18 @@ def update(dt):
         player.image = "reimu"
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
-    bulletsOnScreen = 512
+    bulletsOnScreen = 1024
 
     lap = time.time()
     elapsed_lap = lap - start_level
 
     k = 0
+    interval = 2
 
     while k < bulletsOnScreen:
-        if k*(elapsed/bulletsOnScreen) > 3:
-            update_straight_bullet(i+k)
+        if (k/interval)*(elapsed/bulletsOnScreen) >= interval:
+            print((k/interval)*(elapsed/bulletsOnScreen))
+            update_straight_bullet(k)
         k += 1
 
     # death
@@ -160,8 +164,8 @@ def update(dt):
         Bullets[i+j].y - bulletHeight/2 < player.y < Bullets[i+j].y + bulletHeight/2:
             exit()
 
-    if elapsed >= 100 and i < bullets - 2 - 1:
-        print(elapsed)
+    if elapsed >= 50 and i < bullets - 2 - 1:
+        # print(elapsed)
         for j in range(bulletsOnScreen):
             Bullets[i+j].x = 9001
         i += bulletsOnScreen
