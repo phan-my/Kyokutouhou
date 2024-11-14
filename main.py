@@ -88,15 +88,10 @@ def update(dt):
 
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
+    random_straight_bullet(Bullets, 4.5, playground, elapsed)
     bulletsOnScreen = 1024
     k = 0
-    interval = 2
-    while k < bulletsOnScreen:
-        if (k/interval)*(elapsed/bulletsOnScreen) >= interval:
-            print((k/interval)*(elapsed/bulletsOnScreen))
-            update_straight_bullet(Bullets, k, 4.5, playground)
-        k += 1
-
+    
     death(Bullets, i, player, bulletsOnScreen, bulletWidth, bulletHeight)
 
     if elapsed >= 50 and i < bullets - 2 - 1:
