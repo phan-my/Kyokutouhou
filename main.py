@@ -54,7 +54,7 @@ playerHitbox = Rectangle(
 
 Bullets = []
 
-bullets = 1024*10
+bullets = 1024
 
 for i in range(bullets):
     Bullets.append(Actor("bullet-vertical.png"))
