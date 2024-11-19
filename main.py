@@ -63,6 +63,8 @@ for i in range(bullets):
 bulletWidth = 6
 bulletHeight = 12
 
+frame = Actor("frame")
+
 def draw():
     background.draw()
     player.draw()
@@ -70,6 +72,9 @@ def draw():
     # https://electronstudio.github.io/pygame-zero-book/chapters/shooter.html
     for bullet in Bullets:
         bullet.draw()
+    
+    #draw frame of screen to hide bullets
+    frame.draw()
 
 i = 0
 start = time.time()
