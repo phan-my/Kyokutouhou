@@ -52,8 +52,8 @@ playerHitbox = Rectangle(
     (player.y - playerHeight/2, player.y + playerHeight/2),
 )
 
+# set up bullets
 Bullets = []
-
 bullets = 1024
 
 for i in range(bullets):
@@ -63,6 +63,28 @@ for i in range(bullets):
 bulletWidth = 6
 bulletHeight = 12
 
+# set up enemy
+Enemies = []
+enemies = 128
+enemySpeed = 1
+
+enemy01Width = 32
+enemy01Height = 32
+
+for i in range(enemies):
+    Enemies.append(Actor("enemy-01"))
+    Enemies[i].x = randint(playground.xBorders[0], playground.xBorders[1])
+
+# badbox (enemy hitbox)
+badHitboxes = bullets + enemies
+BadHitbox = []
+for bullet in Bullets:
+    BadHitbox.append(bullet)
+
+for enemy in Enemies:
+    BadHitbox.append(enemies)
+
+# overlay
 frame = Actor("frame")
 
 def draw():
@@ -73,7 +95,10 @@ def draw():
     for bullet in Bullets:
         bullet.draw()
     
-    #draw frame of screen to hide bullets
+    for enemy in Enemies:
+        enemy.draw()
+    
+    # draw frame of screen to hide bullets
     frame.draw()
 
 i = 0
@@ -83,7 +108,7 @@ elapsed = end - start
 
 start_level = time.time()
 def update(dt):
-    global player, bullet, i, start, end, elapsed, start_level
+    global player, bullet, i, start, end, elapsed, start_level, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height
     movement(player, playground)
     reimu_slowdown(player)
 
@@ -94,10 +119,20 @@ def update(dt):
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
     random_straight_bullet(Bullets, 4.5, playground, elapsed)
-    bulletsOnScreen = 1024
+
+    # enemy behavior
+    activeEnemies = 16
+    interval = 2
+    enemySpeed = 1
     k = 0
+    while k < activeEnemies:
+        if (k/interval)*(elapsed/activeEnemies) + 1 >= interval:
+#            print((k/interval)*(elapsed/bulletsOnScreen))
+            update_straight_bullet(Enemies, k, enemySpeed, playground)
+        k += 1
     
-    death(Bullets, i, player, bulletsOnScreen, bulletWidth, bulletHeight)
+    death(Bullets, i, player, bullets, bulletWidth, bulletHeight)
+    death(Enemies, i, player, enemies, enemy01Width, enemy01Height)
 
     if elapsed >= 50 and i < bullets - 2 - 1:
         # print(elapsed)
