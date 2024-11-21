@@ -29,6 +29,8 @@ WIDTH = 800
 HEIGHT = 600
 
 background = Actor("proportional-background")
+
+# set up player
 player = Actor("reimu")
 playerWidth = 32
 playerHeight = 64
@@ -52,9 +54,18 @@ playerHitbox = Rectangle(
     (player.y - playerHeight/2, player.y + playerHeight/2),
 )
 
+# set up player's shots
+PlayerBullets = []
+playerBullets = 16
+playerBulletSpeed = 10
+
+for i in range(playerBullets):
+    PlayerBullets.append(Actor("player-bullet-red"))
+    PlayerBullets[i].pos = player.pos
+
 # set up bullets
 Bullets = []
-bullets = 1024
+bullets = int(1024*2**(0))
 
 for i in range(bullets):
     Bullets.append(Actor("bullet-vertical.png"))
@@ -87,6 +98,8 @@ for enemy in Enemies:
 # overlay
 frame = Actor("frame")
 
+playerLevel = 1
+
 def draw():
     background.draw()
     player.draw()
@@ -98,22 +111,53 @@ def draw():
     for enemy in Enemies:
         enemy.draw()
     
+    # bullets 
+    PlayerBullets[0].draw()
+    
     # draw frame of screen to hide bullets
     frame.draw()
 
+
 i = 0
-start = time.time()
-end = time.time()
+start = time.perf_counter()
+end = time.perf_counter()
 elapsed = end - start
 
-start_level = time.time()
+start_level = time.perf_counter()
+
+ticksSincePlayerShot = 0
+
 def update(dt):
-    global player, bullet, i, start, end, elapsed, start_level, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height
+    global player, bullet, i, start, end, elapsed, start_level, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height, playerLevel
+    global playerBulletSpeed, ticksSincePlayerShot
     movement(player, playground)
     reimu_slowdown(player)
 
+    for j in range(playerBullets):
+        if PlayerBullets[j].y < 0:
+            PlayerBullets[j] = Actor("bullet-vertical")
+            PlayerBullets[j].pos = player.pos
 
-    lap = time.time()
+    if keyboard.z:
+        ticksSincePlayerShot += dt
+        for j in range(playerBullets):
+            # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
+            if fmod(ticksSincePlayerShot, dt - j) < dt:
+                PlayerBullets[j].image = "player-bullet-red"
+                
+    for j in range(playerBullets):
+        # elapsed > 0.1 to prevent startfire
+        if PlayerBullets[j].image == "player-bullet-red" and elapsed > 0.1:
+            PlayerBullets[j].y -= playerBulletSpeed
+    
+    if not keyboard.z:
+        for j in range(playerBullets):
+            if PlayerBullets[j].image != "player-bullet-red":
+                PlayerBullets[j].pos = player.pos
+                PlayerBullets[j].image = "bullet-vertical"
+        ticksSincePlayerShot = 0
+
+    lap = time.perf_counter()
     elapsed_lap = lap - start_level
 
 
@@ -136,12 +180,12 @@ def update(dt):
 
     if elapsed >= 50 and i < bullets - 2 - 1:
         # print(elapsed)
-        for j in range(bulletsOnScreen):
+        for j in range(bullets):
             Bullets[i+j].x = 9001
         i += bulletsOnScreen
-        start = time.time()
+        start = time.perf_counter()
         elapsed = 0
-    end = time.time()
+    end = time.perf_counter()
     elapsed = end - start
     
 # clock.schedule(draw_nth_straight_bullet, 0.5)
