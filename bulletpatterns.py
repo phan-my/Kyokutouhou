@@ -15,10 +15,9 @@ def update_straight_bullet(Bullets, i, speed, playground) -> None:
 def random_straight_bullet(Bullets, speed, playground, elapsed):
     # clock.schedule_interval(update_straight_bullet, 2.0)
     bulletsOnScreen = 512
-    k = 0
     interval = 3
-    while k < bulletsOnScreen:
+    
+    for k in range(bulletsOnScreen):
         if (k/interval)*(elapsed/bulletsOnScreen) + 1 >= interval:
             print((k/interval)*(elapsed/bulletsOnScreen))
             update_straight_bullet(Bullets, k, speed, playground)
-        k += 1
