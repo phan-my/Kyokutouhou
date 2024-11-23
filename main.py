@@ -112,7 +112,8 @@ def draw():
         enemy.draw()
     
     # bullets 
-    PlayerBullets[0].draw()
+    for j in range(playerBullets):
+        PlayerBullets[j].draw()
     
     # draw frame of screen to hide bullets
     frame.draw()
@@ -124,12 +125,15 @@ end = time.perf_counter()
 elapsed = end - start
 
 start_level = time.perf_counter()
-
 ticksSincePlayerShot = 0
+ticksSinceStart = 0
+nthPlayerBullet = 0
 
 def update(dt):
     global player, bullet, i, start, end, elapsed, start_level, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height, playerLevel
     global playerBulletSpeed, ticksSincePlayerShot
+    global ticksSinceStart, nthPlayerBullet
+
     movement(player, playground)
     reimu_slowdown(player)
 
@@ -138,17 +142,16 @@ def update(dt):
             PlayerBullets[j] = Actor("bullet-vertical")
             PlayerBullets[j].pos = player.pos
 
-    if keyboard.z:
-        ticksSincePlayerShot += dt
-        for j in range(playerBullets):
-            # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
-            if fmod(ticksSincePlayerShot, dt - j) < dt:
-                PlayerBullets[j].image = "player-bullet-red"
-                
-    for j in range(playerBullets):
         # elapsed > 0.1 to prevent startfire
         if PlayerBullets[j].image == "player-bullet-red" and elapsed > 0.1:
             PlayerBullets[j].y -= playerBulletSpeed
+
+    if keyboard.z:
+        ticksSincePlayerShot += 1
+        # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
+        if ticksSinceStart % 3 == 0:
+            PlayerBullets[nthPlayerBullet].image = "player-bullet-red"
+            nthPlayerBullet = (nthPlayerBullet + 1) % playerBullets 
     
     if not keyboard.z:
         for j in range(playerBullets):
@@ -187,6 +190,8 @@ def update(dt):
         elapsed = 0
     end = time.perf_counter()
     elapsed = end - start
+
+    ticksSinceStart += 1
     
 # clock.schedule(draw_nth_straight_bullet, 0.5)
 pgzrun.go()
