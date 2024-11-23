@@ -139,7 +139,7 @@ def update(dt):
 
     for j in range(playerBullets):
         if PlayerBullets[j].y < 0:
-            PlayerBullets[j] = Actor("bullet-vertical")
+            PlayerBullets[j] = Actor("blank")
             PlayerBullets[j].pos = player.pos
         if PlayerBullets[j].image != "player-bullet-red":
             PlayerBullets[j].pos = player.pos
@@ -159,7 +159,7 @@ def update(dt):
         for j in range(playerBullets):
             if PlayerBullets[j].image != "player-bullet-red":
                 PlayerBullets[j].pos = player.pos
-                PlayerBullets[j].image = "bullet-vertical"
+                PlayerBullets[j].image = "blank"
         ticksSincePlayerShot = 0
 
     lap = time.perf_counter()
