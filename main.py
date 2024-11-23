@@ -141,6 +141,8 @@ def update(dt):
         if PlayerBullets[j].y < 0:
             PlayerBullets[j] = Actor("bullet-vertical")
             PlayerBullets[j].pos = player.pos
+        if PlayerBullets[j].image != "player-bullet-red":
+            PlayerBullets[j].pos = player.pos
 
         # elapsed > 0.1 to prevent startfire
         if PlayerBullets[j].image == "player-bullet-red" and elapsed > 0.1:
@@ -149,7 +151,7 @@ def update(dt):
     if keyboard.z:
         ticksSincePlayerShot += 1
         # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
-        if ticksSinceStart % 3 == 0:
+        if ticksSinceStart % 5 == 0:
             PlayerBullets[nthPlayerBullet].image = "player-bullet-red"
             nthPlayerBullet = (nthPlayerBullet + 1) % playerBullets 
     
