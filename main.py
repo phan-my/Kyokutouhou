@@ -60,45 +60,45 @@ player.y = playground.yMargins[1] - 24
 
 # set up player's shots
 PlayerBullets = []
-playerBullets = 16
+playerBulletCount = 16
 playerBulletSpeed = 10
 playerLevel = 1
 nthPlayerBullet = 0
 
-for i in range(playerBullets):
+for i in range(playerBulletCount):
     PlayerBullets.append(Actor("player-bullet-red"))
     PlayerBullets[i].pos = player.pos
 
 # set up bullets
 Bullets = []
-bullets = int(1024*2**(0))
+bulletCount = int(1024*2**(0))
 bulletWidth = 6
 bulletHeight = 12
 
-for i in range(bullets):
+for i in range(bulletCount):
     Bullets.append(Actor("bullet-vertical.png"))
     Bullets[i].x = randint(playground.xBorders[0], playground.xBorders[1])
 
 # set up enemy
 Enemies = []
-enemies = 128
+enemyCount = 128
 enemySpeed = 1
 
 enemy01Width = 32
 enemy01Height = 32
 
-for i in range(enemies):
+for i in range(enemyCount):
     Enemies.append(Actor("enemy-01"))
     Enemies[i].x = randint(playground.xBorders[0], playground.xBorders[1])
 
 # badbox (enemy hitbox)
-badHitboxes = bullets + enemies
+badHitboxCount = bulletCount + enemyCount
 BadHitbox = []
 for bullet in Bullets:
     BadHitbox.append(bullet)
 
 for enemy in Enemies:
-    BadHitbox.append(enemies)
+    BadHitbox.append(enemyCount)
 
 # overlay
 frame = Actor("frame")
@@ -132,7 +132,7 @@ ticksSincePlayerShot = 0
 
 # "ticks" refer to dt
 def update(dt):
-    global player, i, start, end, elapsed, startLevel, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height, playerLevel
+    global player, i, start, end, elapsed, startLevel, enemySpeed, Enemies, enemyCount, enemy01Width, enemy01Height, playerLevel
     global ticksSincePlayerShot
     global ticksSinceStart, nthPlayerBullet
 
@@ -145,7 +145,7 @@ def update(dt):
     if not keyboard.z:
         ticksSincePlayerShot = 0
     
-    nthPlayerBullet = shooting(PlayerBullets, nthPlayerBullet, player, ticksSincePlayerShot)
+    nthPlayerBullet = shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSincePlayerShot)
     
     lap = time.perf_counter()
     elapsed_lap = lap - startLevel
@@ -164,12 +164,12 @@ def update(dt):
             update_straight_bullet(Enemies, k, enemySpeed, playground)
         k += 1
     
-    death(Bullets, i, player, bullets, bulletWidth, bulletHeight)
-    death(Enemies, i, player, enemies, enemy01Width, enemy01Height)
+    death(Bullets, i, player, bulletCount, bulletWidth, bulletHeight)
+    death(Enemies, i, player, enemyCount, enemy01Width, enemy01Height)
 
-    if elapsed >= 50 and i < bullets - 2 - 1:
+    if elapsed >= 50 and i < bulletCount - 2 - 1:
         # print(elapsed)
-        for j in range(bullets):
+        for j in range(bulletCount):
             Bullets[i+j].x = 9001
         i += bulletsOnScreen
         start = time.perf_counter()

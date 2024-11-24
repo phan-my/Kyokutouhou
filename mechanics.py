@@ -6,8 +6,9 @@ from pgzero.keyboard import keyboard
 from pgzero.actor import Actor
 PI = 3.141592653589793238462643
 
-# `-> None' is py equiv of void, stackoverflow/questions/36797282
+# allow keyboard arrow control of sprite in area
 def movement(sprite, area) -> None:
+    # `-> None' is py equiv of void, stackoverflow/questions/36797282
     if keyboard.lshift:
         distance = 2.5
     else:
@@ -53,18 +54,19 @@ def movement(sprite, area) -> None:
         if inDown:
             sprite.y += diagonal
 
-def slowdown(player) -> None:
+# lshift for slow movement of sprite
+def slowdown(sprite) -> None:
     # Documentation: Built-in Objects
     if keyboard.lshift:
-        player.image = "reimu-focus"
+        sprite.image = "reimu-focus"
     if not keyboard.lshift:
-        player.image = "reimu"
+        sprite.image = "reimu"
 
-def shooting(PlayerBullets, nthPlayerBullet, player, ticksSincePlayerShot):
-    playerBullets = 16
+# z for firing own bullets; use as nthPlayerBullet = shooting(...)
+def shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSincePlayerShot):
     playerBulletSpeed = 8
 
-    for i in range(playerBullets):
+    for i in range(playerBulletCount):
         if PlayerBullets[i].y < 0:
             PlayerBullets[i].image = "blank"
             PlayerBullets[i].pos = player.pos
@@ -79,12 +81,12 @@ def shooting(PlayerBullets, nthPlayerBullet, player, ticksSincePlayerShot):
         # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
         if ticksSincePlayerShot % 6 == 0:
             PlayerBullets[nthPlayerBullet].image = "player-bullet-red"
-            nthPlayerBullet = (nthPlayerBullet + 1) % playerBullets 
+            nthPlayerBullet = (nthPlayerBullet + 1) % playerBulletCount 
     return nthPlayerBullet
 
 # player hitbox is one point in the center of her sprite
-def death(EnemySprites, i, player, enemySprites, enemyWidth, enemyHeight) -> None:
-    for j in range(enemySprites):
+def death(EnemySprites, i, player, enemySpriteCount, enemyWidth, enemyHeight) -> None:
+    for j in range(enemySpriteCount):
         if EnemySprites[i+j].x - enemyWidth/2 < player.x < EnemySprites[i+j].x + enemyWidth/2 and\
         EnemySprites[i+j].y - enemyHeight/2 < player.y < EnemySprites[i+j].y + enemyHeight/2:
             exit()
