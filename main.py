@@ -93,9 +93,10 @@ Bullets = []
 bulletCount = int(1024*2**(0))
 bulletWidth = 6
 bulletHeight = 12
+nthBullet = 0
 
 for i in range(bulletCount):
-    Bullets.append(Actor("bullet-vertical.png"))
+    Bullets.append(Actor("1x1"))
     Bullets[i].x = randint(playground.xBorders[0], playground.xBorders[1])
 
 # set up enemy
@@ -156,6 +157,7 @@ def update(dt):
     global ticksSincePlayerShot
     global ticksSinceStart
     global playerBulletWidth, playerBulletHeight, nthPlayerBullet
+    global nthBullet
 
     # player mechanics
     movement(player, playground)
@@ -172,7 +174,7 @@ def update(dt):
     elapsed_lap = lap - startLevel
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
-    random_straight_bullet(Bullets, 4.5, playground, elapsed)
+    nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, ticksSinceStart)
 
     # enemy behavior
     activeEnemies = 16
@@ -193,11 +195,11 @@ def update(dt):
             # passive tense
             if enemy01.x - enemy01Width/2 < playerBullet.x < enemy01.x + enemy01Width/2 and\
             enemy01.y - enemy01Height/2 < playerBullet.y < enemy01.y + enemy01Height/2 and \
-            enemy01.image != "blank" and playerBullet.image != "blank":
-                enemy01.image = "blank"
-                playerBullet.image = "blank"
+            enemy01.image != "1x1" and playerBullet.image != "1x1":
+                enemy01.image = "1x1"
+                playerBullet.image = "1x1"
 
-    death(Bullets, i, player, bulletCount, bulletWidth, bulletHeight)
+   # death(Bullets, i, player, bulletCount, bulletWidth, bulletHeight)
     death(Enemies, i, player, enemyCount, enemy01Width, enemy01Height)
 
     if elapsed >= 50 and i < bulletCount - 2 - 1:

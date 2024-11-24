@@ -68,7 +68,7 @@ def shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSin
 
     for i in range(playerBulletCount):
         if PlayerBullets[i].y < 0:
-            PlayerBullets[i].image = "blank"
+            PlayerBullets[i].image = "1x1"
             PlayerBullets[i].pos = player.pos
         if PlayerBullets[i].image != "player-bullet-red":
             PlayerBullets[i].pos = player.pos
@@ -89,5 +89,5 @@ def death(EnemySprites, i, player, enemySpriteCount, enemyWidth, enemyHeight) ->
     for j in range(enemySpriteCount):
         if EnemySprites[i+j].x - enemyWidth/2 < player.x < EnemySprites[i+j].x + enemyWidth/2 and\
         EnemySprites[i+j].y - enemyHeight/2 < player.y < EnemySprites[i+j].y + enemyHeight/2 and\
-        EnemySprites[i+j].image != "blank":
+        EnemySprites[i+j].image != "1x1":
             exit()
