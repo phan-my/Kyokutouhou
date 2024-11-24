@@ -84,6 +84,19 @@ def shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSin
             nthPlayerBullet = (nthPlayerBullet + 1) % playerBulletCount 
     return nthPlayerBullet
 
+def enemy_death(Enemies, enemyWidth, enemyHeight, PlayerBullets):
+    for enemy01 in Enemies:
+        for playerBullet in PlayerBullets:
+            # since enemy's hitbox is way larger than the player's, it is
+            # easier to write in the perspective of the enemy -- sort of a
+            # passive tense
+            if enemy01.x - enemyWidth/2 < playerBullet.x < enemy01.x + enemyWidth/2 and\
+            enemy01.y - enemyHeight/2 < playerBullet.y < enemy01.y + enemyHeight/2 and \
+            enemy01.image != "1x1" and playerBullet.image != "1x1":
+                enemy01.image = "1x1"
+                enemy01.y = -enemyHeight
+                playerBullet.image = "1x1"
+
 # player hitbox is one point in the center of her sprite
 def death(EnemySprites, player, enemySpriteCount, enemyWidth, enemyHeight) -> None:
     for j in range(enemySpriteCount):

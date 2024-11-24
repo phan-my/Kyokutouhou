@@ -194,17 +194,7 @@ def update(dt):
     nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
                 
     # killing enemies
-    for enemy01 in Enemies:
-        for playerBullet in PlayerBullets:
-            # since enemy's hitbox is way larger than the player's, it is
-            # easier to write in the perspective of the enemy -- sort of a
-            # passive tense
-            if enemy01.x - enemy01Width/2 < playerBullet.x < enemy01.x + enemy01Width/2 and\
-            enemy01.y - enemy01Height/2 < playerBullet.y < enemy01.y + enemy01Height/2 and \
-            enemy01.image != "1x1" and playerBullet.image != "1x1":
-                enemy01.image = "1x1"
-                enemy01.y = -enemy01Height
-                playerBullet.image = "1x1"
+    enemy_death(Enemies, enemy01Width, enemy01Height, PlayerBullets)
     
     # damaging boss
     for playerBullet in PlayerBullets:
