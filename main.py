@@ -24,6 +24,24 @@ class Rectangle:
     bl: (int, int)
     """
 
+""" The types of hitboxes.
+    (P)layer
+        - vulnerable to badboxes
+    (PB)PlayerBullets
+        - attacks enemies
+    (G)oodbox
+        - heals player
+    (B)adbox
+        - attacks player
+        - 2 subtypes:
+        Enemy
+            - vulnerable to player bullets
+        Bullets
+            - attack player
+    (S)tage
+        - inert
+"""
+
 TITLE = "Kyokutouhou"
 WIDTH = 800
 HEIGHT = 600
@@ -61,7 +79,8 @@ player.y = playground.yMargins[1] - 24
 # set up player's shots
 PlayerBullets = []
 playerBulletCount = 16
-playerBulletSpeed = 10
+playerBulletWidth = 6
+playerBulletHeight = 12
 playerLevel = 1
 nthPlayerBullet = 0
 
@@ -82,7 +101,7 @@ for i in range(bulletCount):
 # set up enemy
 Enemies = []
 enemyCount = 128
-enemySpeed = 1
+enemySpeed = 2
 
 enemy01Width = 32
 enemy01Height = 32
@@ -90,6 +109,7 @@ enemy01Height = 32
 for i in range(enemyCount):
     Enemies.append(Actor("enemy-01"))
     Enemies[i].x = randint(playground.xBorders[0], playground.xBorders[1])
+    Enemies[i].y = -enemy01Height
 
 # badbox (enemy hitbox)
 badHitboxCount = bulletCount + enemyCount
@@ -97,7 +117,7 @@ BadHitbox = []
 for bullet in Bullets:
     BadHitbox.append(bullet)
 
-for enemy in Enemies:
+for enemy01 in Enemies:
     BadHitbox.append(enemyCount)
 
 # overlay
@@ -134,7 +154,8 @@ ticksSincePlayerShot = 0
 def update(dt):
     global player, i, start, end, elapsed, startLevel, enemySpeed, Enemies, enemyCount, enemy01Width, enemy01Height, playerLevel
     global ticksSincePlayerShot
-    global ticksSinceStart, nthPlayerBullet
+    global ticksSinceStart
+    global playerBulletWidth, playerBulletHeight, nthPlayerBullet
 
     # player mechanics
     movement(player, playground)
@@ -164,6 +185,18 @@ def update(dt):
             update_straight_bullet(Enemies, k, enemySpeed, playground)
         k += 1
     
+    # killing enemies
+    for enemy01 in Enemies:
+        for playerBullet in PlayerBullets:
+            # since enemy's hitbox is way larger than the player's, it is
+            # easier to write in the perspective of the enemy -- sort of a
+            # passive tense
+            if enemy01.x - enemy01Width/2 < playerBullet.x < enemy01.x + enemy01Width/2 and\
+            enemy01.y - enemy01Height/2 < playerBullet.y < enemy01.y + enemy01Height/2 and \
+            enemy01.image != "blank" and playerBullet.image != "blank":
+                enemy01.image = "blank"
+                playerBullet.image = "blank"
+
     death(Bullets, i, player, bulletCount, bulletWidth, bulletHeight)
     death(Enemies, i, player, enemyCount, enemy01Width, enemy01Height)
 

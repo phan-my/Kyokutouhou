@@ -88,5 +88,6 @@ def shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSin
 def death(EnemySprites, i, player, enemySpriteCount, enemyWidth, enemyHeight) -> None:
     for j in range(enemySpriteCount):
         if EnemySprites[i+j].x - enemyWidth/2 < player.x < EnemySprites[i+j].x + enemyWidth/2 and\
-        EnemySprites[i+j].y - enemyHeight/2 < player.y < EnemySprites[i+j].y + enemyHeight/2:
+        EnemySprites[i+j].y - enemyHeight/2 < player.y < EnemySprites[i+j].y + enemyHeight/2 and\
+        EnemySprites[i+j].image != "blank":
             exit()
