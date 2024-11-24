@@ -3,6 +3,7 @@ from math import cos
 import pygame
 import pgzrun
 from pgzero.keyboard import keyboard
+from pgzero.actor import Actor
 PI = 3.141592653589793238462643
 
 # `-> None' is py equiv of void, stackoverflow/questions/36797282
@@ -59,9 +60,31 @@ def reimu_slowdown(player) -> None:
     if not keyboard.lshift:
         player.image = "reimu"
 
+def shooting(PlayerBullets, nthPlayerBullet, player, ticksSincePlayerShot):
+    playerBullets = 16
+    playerBulletSpeed = 8
+
+    for i in range(playerBullets):
+        if PlayerBullets[i].y < 0:
+            PlayerBullets[i].image = "blank"
+            PlayerBullets[i].pos = player.pos
+        if PlayerBullets[i].image != "player-bullet-red":
+            PlayerBullets[i].pos = player.pos
+
+        # elapsed > 0.1 to prevent startfire
+        if PlayerBullets[i].image == "player-bullet-red":
+            PlayerBullets[i].y -= playerBulletSpeed
+
+    if keyboard.z:
+        # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
+        if ticksSincePlayerShot % 6 == 0:
+            PlayerBullets[nthPlayerBullet].image = "player-bullet-red"
+            nthPlayerBullet = (nthPlayerBullet + 1) % playerBullets 
+    return nthPlayerBullet
+
 # player hitbox is one point in the center of her sprite
-def death(Bullets, i, player, bulletsOnScreen, bulletWidth, bulletHeight) -> None:
-    for j in range(bulletsOnScreen):
-        if Bullets[i+j].x - bulletWidth/2 < player.x < Bullets[i+j].x + bulletWidth/2 and\
-        Bullets[i+j].y - bulletHeight/2 < player.y < Bullets[i+j].y + bulletHeight/2:
+def death(EnemySprites, i, player, enemySprites, enemyWidth, enemyHeight) -> None:
+    for j in range(enemySprites):
+        if EnemySprites[i+j].x - enemyWidth/2 < player.x < EnemySprites[i+j].x + enemyWidth/2 and\
+        EnemySprites[i+j].y - enemyHeight/2 < player.y < EnemySprites[i+j].y + enemyHeight/2:
             exit()

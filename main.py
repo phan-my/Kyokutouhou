@@ -112,8 +112,8 @@ def draw():
         enemy.draw()
     
     # bullets 
-    for j in range(playerBullets):
-        PlayerBullets[j].draw()
+    for i in range(playerBullets):
+        PlayerBullets[i].draw()
     
     # draw frame of screen to hide bullets
     frame.draw()
@@ -131,37 +131,19 @@ nthPlayerBullet = 0
 
 def update(dt):
     global player, bullet, i, start, end, elapsed, start_level, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height, playerLevel
-    global playerBulletSpeed, ticksSincePlayerShot
+    global ticksSincePlayerShot
     global ticksSinceStart, nthPlayerBullet
 
     movement(player, playground)
     reimu_slowdown(player)
 
-    for j in range(playerBullets):
-        if PlayerBullets[j].y < 0:
-            PlayerBullets[j] = Actor("blank")
-            PlayerBullets[j].pos = player.pos
-        if PlayerBullets[j].image != "player-bullet-red":
-            PlayerBullets[j].pos = player.pos
-
-        # elapsed > 0.1 to prevent startfire
-        if PlayerBullets[j].image == "player-bullet-red" and elapsed > 0.1:
-            PlayerBullets[j].y -= playerBulletSpeed
-
     if keyboard.z:
         ticksSincePlayerShot += 1
-        # if fmod(j + ticksSincePlayerShot*playerBullets/dt, 5) == 0:
-        if ticksSinceStart % 5 == 0:
-            PlayerBullets[nthPlayerBullet].image = "player-bullet-red"
-            nthPlayerBullet = (nthPlayerBullet + 1) % playerBullets 
-    
     if not keyboard.z:
-        for j in range(playerBullets):
-            if PlayerBullets[j].image != "player-bullet-red":
-                PlayerBullets[j].pos = player.pos
-                PlayerBullets[j].image = "blank"
         ticksSincePlayerShot = 0
-
+    
+    nthPlayerBullet = shooting(PlayerBullets, nthPlayerBullet, player, ticksSincePlayerShot)
+    
     lap = time.perf_counter()
     elapsed_lap = lap - start_level
 
