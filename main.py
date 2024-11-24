@@ -28,6 +28,7 @@ TITLE = "Kyokutouhou"
 WIDTH = 800
 HEIGHT = 600
 
+# set up background
 background = Actor("proportional-background")
 
 # set up player
@@ -35,6 +36,7 @@ player = Actor("reimu")
 playerWidth = 32
 playerHeight = 64
 
+# set up scene
 playground = Rectangle(
     (50 + playerWidth/2, 470 - playerWidth/2),
     (30 + playerHeight/2, 560 - playerHeight/2),
@@ -44,8 +46,6 @@ playground = Rectangle(
 
 playgroundWidth = playground.xMargins[1] - playground.xMargins[0]
 playgroundHeight = playground.yMargins[1] - playground.yMargins[0]
-player.x = playground.xMargins[0] + (playgroundWidth/2)
-player.y = playground.yMargins[1] - 24
 
 playerHitbox = Rectangle(
     (player.x, player.x),
@@ -54,10 +54,16 @@ playerHitbox = Rectangle(
     (player.y - playerHeight/2, player.y + playerHeight/2),
 )
 
+# position player
+player.x = playground.xMargins[0] + (playgroundWidth/2)
+player.y = playground.yMargins[1] - 24
+
 # set up player's shots
 PlayerBullets = []
 playerBullets = 16
 playerBulletSpeed = 10
+playerLevel = 1
+nthPlayerBullet = 0
 
 for i in range(playerBullets):
     PlayerBullets.append(Actor("player-bullet-red"))
@@ -66,13 +72,12 @@ for i in range(playerBullets):
 # set up bullets
 Bullets = []
 bullets = int(1024*2**(0))
+bulletWidth = 6
+bulletHeight = 12
 
 for i in range(bullets):
     Bullets.append(Actor("bullet-vertical.png"))
     Bullets[i].x = randint(playground.xBorders[0], playground.xBorders[1])
-
-bulletWidth = 6
-bulletHeight = 12
 
 # set up enemy
 Enemies = []
@@ -98,8 +103,6 @@ for enemy in Enemies:
 # overlay
 frame = Actor("frame")
 
-playerLevel = 1
-
 def draw():
     background.draw()
     player.draw()
@@ -112,28 +115,28 @@ def draw():
         enemy.draw()
     
     # bullets 
-    for i in range(playerBullets):
-        PlayerBullets[i].draw()
+    for playerBullet in PlayerBullets:
+        playerBullet.draw()
     
     # draw frame of screen to hide bullets
     frame.draw()
 
-
+# timing
 i = 0
 start = time.perf_counter()
 end = time.perf_counter()
 elapsed = end - start
-
-start_level = time.perf_counter()
-ticksSincePlayerShot = 0
+startLevel = time.perf_counter()
 ticksSinceStart = 0
-nthPlayerBullet = 0
+ticksSincePlayerShot = 0
 
+# "ticks" refer to dt
 def update(dt):
-    global player, bullet, i, start, end, elapsed, start_level, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height, playerLevel
+    global player, i, start, end, elapsed, startLevel, enemySpeed, Enemies, enemies, enemy01Width, enemy01Height, playerLevel
     global ticksSincePlayerShot
     global ticksSinceStart, nthPlayerBullet
 
+    # player mechanics
     movement(player, playground)
     slowdown(player)
 
@@ -145,8 +148,7 @@ def update(dt):
     nthPlayerBullet = shooting(PlayerBullets, nthPlayerBullet, player, ticksSincePlayerShot)
     
     lap = time.perf_counter()
-    elapsed_lap = lap - start_level
-
+    elapsed_lap = lap - startLevel
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
     random_straight_bullet(Bullets, 4.5, playground, elapsed)
