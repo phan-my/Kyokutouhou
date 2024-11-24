@@ -135,7 +135,7 @@ def update(dt):
     global ticksSinceStart, nthPlayerBullet
 
     movement(player, playground)
-    reimu_slowdown(player)
+    slowdown(player)
 
     if keyboard.z:
         ticksSincePlayerShot += 1

@@ -53,7 +53,7 @@ def movement(sprite, area) -> None:
         if inDown:
             sprite.y += diagonal
 
-def reimu_slowdown(player) -> None:
+def slowdown(player) -> None:
     # Documentation: Built-in Objects
     if keyboard.lshift:
         player.image = "reimu-focus"
