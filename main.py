@@ -118,7 +118,7 @@ bossWidth = 32
 bossHeight = 64
 boss.x = playground.xMargins[0] + (playgroundWidth/2)
 boss.y = bossHeight + int(bossHeight*0.1)
-bossHealth = 10
+bossHealth = 1024
 
 # badbox (enemy hitbox)
 badHitboxCount = bulletCount + enemyCount
@@ -197,16 +197,12 @@ def update(dt):
     enemy_death(Enemies, enemy01Width, enemy01Height, PlayerBullets)
     
     # damaging boss
-    for playerBullet in PlayerBullets:
-
-        if boss.x - bossWidth/2 < playerBullet.x < boss.x + bossWidth/2 and\
-        boss.y - bossHeight/2 < playerBullet.y < boss.y + bossHeight/2 and \
-        playerBullet.image != "1x1":
-            bossHealth -= 1
-            playerBullet.image = "1x1"
+    bossHealth = boss_damage(boss, bossWidth, bossHeight, bossHealth, PlayerBullets)
     
     if bossHealth <= 0:
-        boss.image = "1x1"
+        print("???: Oouuuuuch!")
+        print("You win!")
+        exit()
 
     death(Bullets, player, bulletCount, bulletWidth, bulletHeight)
     death(Enemies, player, enemyCount, enemy01Width, enemy01Height)

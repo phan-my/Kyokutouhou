@@ -97,6 +97,15 @@ def enemy_death(Enemies, enemyWidth, enemyHeight, PlayerBullets):
                 enemy01.y = -enemyHeight
                 playerBullet.image = "1x1"
 
+def boss_damage(boss, bossWidth, bossHeight, bossHealth, PlayerBullets):
+    for playerBullet in PlayerBullets:
+        if boss.x - bossWidth/2 < playerBullet.x < boss.x + bossWidth/2 and\
+        boss.y - bossHeight/2 < playerBullet.y < boss.y + bossHeight/2 and \
+        playerBullet.image != "1x1":
+            bossHealth -= 1
+            playerBullet.image = "1x1"
+    return bossHealth
+
 # player hitbox is one point in the center of her sprite
 def death(EnemySprites, player, enemySpriteCount, enemyWidth, enemyHeight) -> None:
     for j in range(enemySpriteCount):
