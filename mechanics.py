@@ -85,9 +85,9 @@ def shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSin
     return nthPlayerBullet
 
 # player hitbox is one point in the center of her sprite
-def death(EnemySprites, i, player, enemySpriteCount, enemyWidth, enemyHeight) -> None:
+def death(EnemySprites, player, enemySpriteCount, enemyWidth, enemyHeight) -> None:
     for j in range(enemySpriteCount):
-        if EnemySprites[i+j].x - enemyWidth/2 < player.x < EnemySprites[i+j].x + enemyWidth/2 and\
-        EnemySprites[i+j].y - enemyHeight/2 < player.y < EnemySprites[i+j].y + enemyHeight/2 and\
-        EnemySprites[i+j].image != "1x1":
+        if EnemySprites[j].x - enemyWidth/2 < player.x < EnemySprites[j].x + enemyWidth/2 and\
+        EnemySprites[j].y - enemyHeight/2 < player.y < EnemySprites[j].y + enemyHeight/2 and\
+        EnemySprites[j].image != "1x1":
             exit()

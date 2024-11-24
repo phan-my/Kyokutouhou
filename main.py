@@ -85,7 +85,7 @@ playerLevel = 1
 nthPlayerBullet = 0
 
 for i in range(playerBulletCount):
-    PlayerBullets.append(Actor("player-bullet-red"))
+    PlayerBullets.append(Actor("1x1"))
     PlayerBullets[i].pos = player.pos
 
 # set up bullets
@@ -103,14 +103,22 @@ for i in range(bulletCount):
 Enemies = []
 enemyCount = 128
 enemySpeed = 2
-
+nthEnemy = 0
 enemy01Width = 32
 enemy01Height = 32
 
 for i in range(enemyCount):
-    Enemies.append(Actor("enemy-01"))
+    Enemies.append(Actor("1x1"))
     Enemies[i].x = randint(playground.xBorders[0], playground.xBorders[1])
     Enemies[i].y = -enemy01Height
+
+# set up boss
+boss = Actor("boss")
+bossWidth = 32
+bossHeight = 64
+boss.x = playground.xMargins[0] + (playgroundWidth/2)
+boss.y = bossHeight + int(bossHeight*0.1)
+bossHealth = 10
 
 # badbox (enemy hitbox)
 badHitboxCount = bulletCount + enemyCount
@@ -139,6 +147,8 @@ def draw():
     for playerBullet in PlayerBullets:
         playerBullet.draw()
     
+    boss.draw()
+    
     # draw frame of screen to hide bullets
     frame.draw()
 
@@ -148,17 +158,19 @@ start = time.perf_counter()
 end = time.perf_counter()
 elapsed = end - start
 startLevel = time.perf_counter()
+timeSinceStart_s = time.time()
 ticksSinceStart = 0
 ticksSincePlayerShot = 0
 
 # "ticks" refer to dt
 def update(dt):
-    global player, i, start, end, elapsed, startLevel, enemySpeed, Enemies, enemyCount, enemy01Width, enemy01Height, playerLevel
-    global ticksSincePlayerShot
-    global ticksSinceStart
+    global player, start, end, elapsed, startLevel, playerLevel
+    global enemySpeed, Enemies, enemyCount, nthEnemy, enemy01Width, enemy01Height
+    global ticksSincePlayerShot, ticksSinceStart
     global playerBulletWidth, playerBulletHeight, nthPlayerBullet
     global nthBullet
-
+    global bossHealth
+        
     # player mechanics
     movement(player, playground)
     slowdown(player)
@@ -168,25 +180,19 @@ def update(dt):
     if not keyboard.z:
         ticksSincePlayerShot = 0
     
-    nthPlayerBullet = shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSincePlayerShot)
+    if ticksSinceStart != 0:
+        nthPlayerBullet = shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSincePlayerShot)
     
     lap = time.perf_counter()
     elapsed_lap = lap - startLevel
 
     # clock.schedule_interval(update_straight_bullet, 2.0)
-    nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, ticksSinceStart)
+    nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
 
     # enemy behavior
     activeEnemies = 16
-    interval = 2
-    enemySpeed = 1
-    k = 0
-    while k < activeEnemies:
-        if (k/interval)*(elapsed/activeEnemies) + 1 >= interval:
-#            print((k/interval)*(elapsed/bulletsOnScreen))
-            update_straight_bullet(Enemies, k, enemySpeed, playground)
-        k += 1
-    
+    nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
+                
     # killing enemies
     for enemy01 in Enemies:
         for playerBullet in PlayerBullets:
@@ -197,10 +203,23 @@ def update(dt):
             enemy01.y - enemy01Height/2 < playerBullet.y < enemy01.y + enemy01Height/2 and \
             enemy01.image != "1x1" and playerBullet.image != "1x1":
                 enemy01.image = "1x1"
+                enemy01.y = -enemy01Height
                 playerBullet.image = "1x1"
+    
+    # damaging boss
+    for playerBullet in PlayerBullets:
 
-   # death(Bullets, i, player, bulletCount, bulletWidth, bulletHeight)
-    death(Enemies, i, player, enemyCount, enemy01Width, enemy01Height)
+        if boss.x - bossWidth/2 < playerBullet.x < boss.x + bossWidth/2 and\
+        boss.y - bossHeight/2 < playerBullet.y < boss.y + bossHeight/2 and \
+        playerBullet.image != "1x1":
+            bossHealth -= 1
+            playerBullet.image = "1x1"
+    
+    if bossHealth <= 0:
+        boss.image = "1x1"
+
+    death(Bullets, player, bulletCount, bulletWidth, bulletHeight)
+    death(Enemies, player, enemyCount, enemy01Width, enemy01Height)
 
     if elapsed >= 50 and i < bulletCount - 2 - 1:
         # print(elapsed)
@@ -216,4 +235,3 @@ def update(dt):
     
 # clock.schedule(draw_nth_straight_bullet, 0.5)
 pgzrun.go()
-print("Hello, World!")
