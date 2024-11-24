@@ -154,11 +154,11 @@ def draw():
 
 # timing
 i = 0
-start = time.perf_counter()
+start = time.time()
 end = time.perf_counter()
 elapsed = end - start
 startLevel = time.perf_counter()
-timeSinceStart_s = time.time()
+timeSinceStart_s = time.perf_counter()
 ticksSinceStart = 0
 ticksSincePlayerShot = 0
 
@@ -166,11 +166,12 @@ ticksSincePlayerShot = 0
 def update(dt):
     global player, start, end, elapsed, startLevel, playerLevel
     global enemySpeed, Enemies, enemyCount, nthEnemy, enemy01Width, enemy01Height
-    global ticksSincePlayerShot, ticksSinceStart
-    global playerBulletWidth, playerBulletHeight, nthPlayerBullet
+    global ticksSinceStart, timeSinceStart_s
+    global playerBulletWidth, playerBulletHeight, nthPlayerBullet, ticksSincePlayerShot
     global nthBullet
     global bossHealth
-        
+    
+    """UNIVERSAL MECHANICS"""
     # player mechanics
     movement(player, playground)
     slowdown(player)
@@ -183,22 +184,42 @@ def update(dt):
     if ticksSinceStart != 0:
         nthPlayerBullet = shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSincePlayerShot)
     
-    lap = time.perf_counter()
-    elapsed_lap = lap - startLevel
-
-    # clock.schedule_interval(update_straight_bullet, 2.0)
-    nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
-
-    # enemy behavior
-    activeEnemies = 16
-    nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
-                
     # killing enemies
     enemy_death(Enemies, enemy01Width, enemy01Height, PlayerBullets)
     
     # damaging boss
     bossHealth = boss_damage(boss, bossWidth, bossHeight, bossHealth, PlayerBullets)
     
+    """STAGE PROGRESSION"""
+    # clock.schedule_interval(update_straight_bullet, 2.0)
+    if ticksSinceStart < 1000:
+        if ticksSinceStart <= 1:
+            print("controls")
+            print(" arrows - movement")
+            print(" shift - slowdown")
+            print(" z - shoot\n")
+            print("You encounter some weird gremlin.")
+            print("???: GoooooD MORNING!!!")
+        if ticksSinceStart == 100:
+            print("???: Wanna play League?")
+        if ticksSinceStart == 300:
+            print("Reimu: Are those your hands?")
+        if ticksSinceStart == 400:
+            print("???: Why, yes, these are my FISTS!")
+        if ticksSinceStart == 600:
+            print("Reimu: Those perfectly match the holes in our walls.")
+        if ticksSinceStart == 800:
+            print("    Also, what's League, anyway?")
+        if ticksSinceStart == 900:
+            print("???: LEAGUE MY BALLS!")
+
+    if ticksSinceStart > 1000:
+        nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
+        
+        # enemy behavior
+        activeEnemies = 16
+        nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
+                
     if bossHealth <= 0:
         print("???: Oouuuuuch!")
         print("You win!")
@@ -218,6 +239,7 @@ def update(dt):
     elapsed = end - start
 
     ticksSinceStart += 1
+    timeSinceStart_s = time.time() - start
     
 # clock.schedule(draw_nth_straight_bullet, 0.5)
 pgzrun.go()
