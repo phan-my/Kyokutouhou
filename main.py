@@ -81,8 +81,10 @@ PlayerBullets = []
 playerBulletCount = 16
 playerBulletWidth = 6
 playerBulletHeight = 12
+playerHealth = 4
 playerLevel = 1
 nthPlayerBullet = 0
+invincibilityFrames = 100
 
 for i in range(playerBulletCount):
     PlayerBullets.append(Actor("1x1"))
@@ -164,12 +166,12 @@ ticksSincePlayerShot = 0
 
 # "ticks" refer to dt
 def update(dt):
-    global player, start, end, elapsed, startLevel, playerLevel
+    global player, playerHealth, playerLevel, invincibilityFrames
     global enemySpeed, Enemies, enemyCount, nthEnemy, enemy01Width, enemy01Height
-    global ticksSinceStart, timeSinceStart_s
     global playerBulletWidth, playerBulletHeight, nthPlayerBullet, ticksSincePlayerShot
     global nthBullet
     global bossHealth
+    global start, end, elapsed, startLevel, ticksSinceStart, timeSinceStart_s
     
     """UNIVERSAL MECHANICS"""
     # player mechanics
@@ -190,6 +192,25 @@ def update(dt):
     # damaging boss
     bossHealth = boss_damage(boss, bossWidth, bossHeight, bossHealth, PlayerBullets)
     
+    if bossHealth <= 0:
+        print("???: Oouuuuuch!")
+        print("You win!")
+        exit()
+    
+    # i-frame mechanics
+    if (playerHealth > death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth) or\
+    playerHealth > death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)) and invincibilityFrames < 0:
+        playerHealth = death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth)
+        playerHealth = death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)
+        player.x = playground.xMargins[0] + (playgroundWidth/2)
+        player.y = playground.yMargins[1] - 24
+        invincibilityFrames = 100
+    
+    if playerHealth == 0:
+        print("???: Yay! Now you HAVE to play League!")
+        print("\nYou lost at " + str(timeSinceStart_s) + " s")
+        exit()
+
     """STAGE PROGRESSION"""
     # clock.schedule_interval(update_straight_bullet, 2.0)
     if ticksSinceStart < 1000:
@@ -212,7 +233,6 @@ def update(dt):
             print("    Also, what's League, anyway?")
         if ticksSinceStart == 900:
             print("???: LEAGUE MY BALLS!")
-
     if ticksSinceStart > 1000:
         nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
         
@@ -220,13 +240,6 @@ def update(dt):
         activeEnemies = 16
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
                 
-    if bossHealth <= 0:
-        print("???: Oouuuuuch!")
-        print("You win!")
-        exit()
-
-    death(Bullets, player, bulletCount, bulletWidth, bulletHeight)
-    death(Enemies, player, enemyCount, enemy01Width, enemy01Height)
 
     if elapsed >= 50 and i < bulletCount - 2 - 1:
         # print(elapsed)
@@ -240,6 +253,7 @@ def update(dt):
 
     ticksSinceStart += 1
     timeSinceStart_s = time.time() - start
+    invincibilityFrames -= 1
     
 # clock.schedule(draw_nth_straight_bullet, 0.5)
 pgzrun.go()
