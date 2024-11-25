@@ -202,6 +202,7 @@ def update(dt):
     playerHealth > death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)) and invincibilityFrames < 0:
         playerHealth = death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth)
         playerHealth = death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)
+        sounds.death.play()
         player.x = playground.xMargins[0] + (playgroundWidth/2)
         player.y = playground.yMargins[1] - 24
         invincibilityFrames = 100
