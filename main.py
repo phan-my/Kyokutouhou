@@ -214,11 +214,7 @@ def update(dt):
     """STAGE PROGRESSION"""
     # clock.schedule_interval(update_straight_bullet, 2.0)
     if ticksSinceStart < 1000:
-        if ticksSinceStart <= 1:
-            print("controls")
-            print(" arrows - movement")
-            print(" shift - slowdown")
-            print(" z - shoot\n")
+        if ticksSinceStart == 0:
             print("You encounter some weird gremlin.")
             print("???: GoooooD MORNING!!!")
         if ticksSinceStart == 100:
@@ -243,6 +239,15 @@ def update(dt):
     ticksSinceStart += 1
     timeSinceStart_s = time.time() - start
     invincibilityFrames -= 1
-    
-# clock.schedule(draw_nth_straight_bullet, 0.5)
+
+def main() -> int:
+    print("controls")
+    print(" arrows - movement")
+    print(" shift - slowdown")
+    print(" z - shoot\n")
+    return 0
+
+if __name__ != '__main__':
+    main()
+
 pgzrun.go()
