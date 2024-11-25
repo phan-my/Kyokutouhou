@@ -19,7 +19,6 @@ def random_straight_bullet(Bullets, bulletCount, nthBullet, playground, speed, i
             nthPlayerBullet = (nthPlayerBullet + 1) % playerBulletCount 
     for k in range(bulletsOnScreen):
         if (k/interval)*(elapsed/bulletsOnScreen) + 1 >= interval:"""
-    bulletsOnScreen = bulletCount/2
 
     if ticksSinceStart % interval == 0:
         Bullets[nthBullet].image = "bullet-vertical"
@@ -27,7 +26,10 @@ def random_straight_bullet(Bullets, bulletCount, nthBullet, playground, speed, i
     
     for bullet in Bullets:
         if bullet.image != "1x1":
-            update_straight_bullet(bullet, speed, playground)   
+            update_straight_bullet(bullet, speed, playground)
+        if bullet.y > 600:
+            bullet.y = 0 
+            bullet.image = "1x1"
     return nthBullet
 
 # all enemy01 are created equal
@@ -43,5 +45,7 @@ def random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart):
     for enemy in Enemies:
         if enemy.image != "1x1":
             update_straight_bullet(enemy, speed, playground)
+        if enemy.y > 600:
+            enemy.image = "1x1"
     
     return nthEnemy

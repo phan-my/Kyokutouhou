@@ -214,6 +214,7 @@ def update(dt):
     """STAGE PROGRESSION"""
     # clock.schedule_interval(update_straight_bullet, 2.0)
     if ticksSinceStart < 1000:
+        print(bossHealth)
         if ticksSinceStart <= 1:
             print("controls")
             print(" arrows - movement")
@@ -239,17 +240,6 @@ def update(dt):
         # enemy behavior
         activeEnemies = 16
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
-                
-
-    if elapsed >= 50 and i < bulletCount - 2 - 1:
-        # print(elapsed)
-        for j in range(bulletCount):
-            Bullets[i+j].x = 9001
-        i += bulletsOnScreen
-        start = time.perf_counter()
-        elapsed = 0
-    end = time.perf_counter()
-    elapsed = end - start
 
     ticksSinceStart += 1
     timeSinceStart_s = time.time() - start
