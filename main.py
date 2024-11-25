@@ -214,7 +214,6 @@ def update(dt):
     """STAGE PROGRESSION"""
     # clock.schedule_interval(update_straight_bullet, 2.0)
     if ticksSinceStart < 1000:
-        print(bossHealth)
         if ticksSinceStart <= 1:
             print("controls")
             print(" arrows - movement")
