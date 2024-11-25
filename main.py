@@ -212,7 +212,7 @@ def update(dt):
         exit()
 
     """STAGE PROGRESSION"""
-    # clock.schedule_interval(update_straight_bullet, 2.0)
+    # part 0: dialogue
     if ticksSinceStart < 1000:
         if ticksSinceStart == 0:
             print("You encounter some weird gremlin.")
@@ -229,7 +229,8 @@ def update(dt):
             print("    Also, what's League, anyway?")
         if ticksSinceStart == 900:
             print("???: LEAGUE MY BALLS!")
-    if ticksSinceStart > 1000:
+    # part 1: mediocre random bullets and enemies
+    if 1000 < ticksSinceStart < 3000:
         nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
         
         # enemy behavior
