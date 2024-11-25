@@ -215,6 +215,12 @@ def update(dt):
     """STAGE PROGRESSION"""
     # part 0: dialogue
     if ticksSinceStart < 1000:
+        # skip dialogue option
+        if keyboard.lctrl:
+            # to trigger dialogue below
+            if ticksSinceStart % 10 != 0:
+                ticksSinceStart += 10 - ticksSinceStart % 10
+            ticksSinceStart += 10
         if ticksSinceStart == 0:
             print("You encounter some weird gremlin.")
             print("???: GoooooD MORNING!!!")
