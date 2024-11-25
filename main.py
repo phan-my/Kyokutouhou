@@ -155,14 +155,12 @@ def draw():
     frame.draw()
 
 # timing
-i = 0
-start = time.time()
-end = time.perf_counter()
-elapsed = end - start
-startLevel = time.perf_counter()
-timeSinceStart_s = time.perf_counter()
+startLevel = time.time()
+timeSinceStart_s = time.time() - startLevel
 ticksSinceStart = 0
 ticksSincePlayerShot = 0
+startFight = time.time()
+timeSinceFight_s = time.time()
 
 # "ticks" refer to dt
 def update(dt):
@@ -171,7 +169,7 @@ def update(dt):
     global playerBulletWidth, playerBulletHeight, nthPlayerBullet, ticksSincePlayerShot
     global nthBullet
     global bossHealth
-    global start, end, elapsed, startLevel, ticksSinceStart, timeSinceStart_s
+    global startLevel, ticksSinceStart, timeSinceStart_s, startFight, timeSinceFight_s
     
     """UNIVERSAL MECHANICS"""
     # player mechanics
@@ -236,8 +234,13 @@ def update(dt):
             print("    Also, what's League, anyway?")
         if ticksSinceStart == 900:
             print("???: LEAGUE MY BALLS!")
+
     # part 1: mediocre random bullets and enemies
-    if 1000 < ticksSinceStart < 3000:
+    if 1000 <= ticksSinceStart < 3000:
+        # for score measurement to not conflict with dialog skipping
+        if ticksSinceStart == 1000:
+            startFight = time.time()
+
         nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
         
         # enemy behavior
@@ -245,7 +248,8 @@ def update(dt):
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
 
     ticksSinceStart += 1
-    timeSinceStart_s = time.time() - start
+    timeSinceStart_s = time.time() - startLevel
+    timeSinceFight_s = time.time() - startFight
     invincibilityFrames -= 1
 
 def main() -> int:
