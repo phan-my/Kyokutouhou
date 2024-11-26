@@ -11,6 +11,7 @@ from dataclasses import dataclass
 PI = 3.141592653589793238462643
 
 # struct-like object for hitboxes and playground
+# stackoverflow/35988
 @dataclass
 class Rectangle:
     xMargins: (int, int)
@@ -55,6 +56,7 @@ playerWidth = 32
 playerHeight = 64
 
 # set up scene
+# margins and borders are constants as seen in assets/background.xcf
 playground = Rectangle(
     (50 + playerWidth/2, 470 - playerWidth/2),
     (30 + playerHeight/2, 560 - playerHeight/2),
@@ -71,6 +73,17 @@ playerHitbox = Rectangle(
     (player.x - playerWidth/2, player.x + playerWidth/2),
     (player.y - playerHeight/2, player.y + playerHeight/2),
 )
+
+menu = Rectangle(
+    (490, 750),
+    (30, 560),
+    (490 - 2, 750 + 2),
+    (30 - 2, 560 + 2)
+)
+
+menuWidth = menu.xMargins[1] - menu.xMargins[0]
+menuHeight = menu.yMargins[1] - menu.yMargins[0]
+menuBackground = Actor("menu")
 
 # position player
 player.x = playground.xMargins[0] + (playgroundWidth/2)
@@ -132,10 +145,19 @@ for enemy01 in Enemies:
     BadHitbox.append(enemyCount)
 
 # overlay
+Hearts = []
+for i in range(playerHealth):
+    Hearts.append(Actor("heart"))
+for i in range(playerHealth):
+    Hearts[i].x = menu.xMargins[0] + 50 + (i*(menuWidth - 50))/(playerHealth)
+    Hearts[i].y = 200
+
 frame = Actor("frame")
 
+# draw all backgrounds, entities, and overlays
 def draw():
     background.draw()
+    menuBackground.draw()
     player.draw()
 
     # https://electronstudio.github.io/pygame-zero-book/chapters/shooter.html
@@ -145,11 +167,13 @@ def draw():
     for enemy in Enemies:
         enemy.draw()
     
-    # bullets 
     for playerBullet in PlayerBullets:
         playerBullet.draw()
     
     boss.draw()
+
+    for heart in Hearts:
+        heart.draw()
     
     # draw frame of screen to hide bullets
     frame.draw()
@@ -201,6 +225,7 @@ def update(dt):
         playerHealth = death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth)
         playerHealth = death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)
         sounds.death.play()
+        Hearts[playerHealth].image = "1x1"
         player.x = playground.xMargins[0] + (playgroundWidth/2)
         player.y = playground.yMargins[1] - 24
         invincibilityFrames = 100
