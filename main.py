@@ -205,9 +205,10 @@ def update(dt):
         player.y = playground.yMargins[1] - 24
         invincibilityFrames = 100
     
+    # game over
     if playerHealth == 0:
         print("???: Yay! Now you HAVE to play League!")
-        print("\nYou lost at " + str(timeSinceStart_s) + " s")
+        print("\nYou lost at " + str(timeSinceFight_s) + " s")
         exit()
 
     """STAGE PROGRESSION"""
