@@ -251,7 +251,7 @@ def update(dt):
         if keyboard.lctrl:
             # to trigger dialogue below
             if ticksSinceStart % 10 != 0:
-                ticksSinceStart += 10 - ticksSinceStart % 10
+                ticksSinceStart -= ticksSinceStart % 10
             ticksSinceStart += 10
         if ticksSinceStart == 0:
             print("You encounter some weird gremlin.")
@@ -270,11 +270,14 @@ def update(dt):
             print("???: LEAGUE MY BALLS!")
 
     # part 1: mediocre random bullets and enemies
-    if 1000 <= ticksSinceStart < 3000:
+    if 1010 <= ticksSinceStart < 3500:
         # for score measurement to not conflict with dialog skipping, using
         # separate timeSinceFight_s (based on startFighr) from timeSinceStart_s
-        if ticksSinceStart == 1000:
+        if ticksSinceStart == 1010:
             startFight = time.time()
+
+            # Built-in Objects
+            music.play('to-rizz-the-far-east')
 
         # nth bullet startd falling at 4.5 speed in interval of 2 ticks
         nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
