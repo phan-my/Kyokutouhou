@@ -53,6 +53,7 @@ playerHeight = 64
 
 # set up scene
 # margins and borders are constants as seen in assets/background.xcf
+playgroundImage = Actor("playground")
 playground = Rectangle(
     (50 + playerWidth/2, 470 - playerWidth/2),
     (30 + playerHeight/2, 560 - playerHeight/2),
@@ -153,6 +154,7 @@ frame = Actor("frame")
 # draw all backgrounds, entities, and overlays
 def draw():
     background.draw()
+    playgroundImage.draw()
     menuBackground.draw()
     player.draw()
 
