@@ -1,5 +1,7 @@
 # Kyokutouhou
-Kyokutouhou is a fan game based on ZUN's Touhou Project.
+Kyokutouhou ("k2hu" if you <em>really</em> want to) is a fan game based on ZUN's Touhou Project. In the spirit of doujin culture, k2hu is "free" as in "freedom"... but also happens to be open source!
+
+Another September, another incident has occured somewhere in the Far East. The culprit this time reveals herself to possess charisma points off the charts.
 
 ## Installation
 ### Debian
