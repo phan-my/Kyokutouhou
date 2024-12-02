@@ -1,17 +1,13 @@
 from bulletpatterns import *
 from mechanics import *
-import math
-from math import cos, fmod
 import time
-from time import sleep
 import pygame
 import pgzrun
 from random import randint
 from dataclasses import dataclass
-PI = 3.141592653589793238462643
 
 # struct-like object for hitboxes and playground
-# stackoverflow/35988
+# stackoverflow-35988
 @dataclass
 class Rectangle:
     xMargins: (int, int)
@@ -43,11 +39,11 @@ class Rectangle:
         - inert
 """
 
+
+# set up interface
 TITLE = "Kyokutouhou"
 WIDTH = 800
 HEIGHT = 600
-
-# set up background
 background = Actor("proportional-background")
 
 # set up player
@@ -198,14 +194,16 @@ def update(dt):
     """UNIVERSAL MECHANICS"""
     # player mechanics
     movement(player, playground)
-    slowdown(player)
 
+    # get timing for shooting function
     if keyboard.z:
         ticksSincePlayerShot += 1
     if not keyboard.z:
         ticksSincePlayerShot = 0
     
+    # if statement prevents startshot
     if ticksSinceStart != 0:
+        # shooting bullets
         nthPlayerBullet = shooting(PlayerBullets, playerBulletCount, nthPlayerBullet, player, ticksSincePlayerShot)
     
     # killing enemies
@@ -214,20 +212,30 @@ def update(dt):
     # damaging boss
     bossHealth = boss_damage(boss, bossWidth, bossHeight, bossHealth, PlayerBullets)
     
+    # win
     if bossHealth <= 0:
         print("???: Oouuuuuch!")
         print("You win!")
         exit()
     
-    # i-frame mechanics
-    if (playerHealth > death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth) or\
-    playerHealth > death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)) and invincibilityFrames < 0:
+    # playerDies statement as a union of all possible causes of death
+    playerDiesToBullet = playerHealth > death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth)
+    playerDiesToEnemy01 = playerHealth > death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)
+    playerDies = playerDiesToBullet or playerDiesToEnemy01
+
+    # sequence of actions when player dies
+    if playerDies and invincibilityFrames < 0:
+        # playerHealth-- and reposition player
         playerHealth = death(Bullets, bulletCount, bulletWidth, bulletHeight, player, playerHealth)
         playerHealth = death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)
-        sounds.death.play()
-        Hearts[playerHealth].image = "1x1"
         player.x = playground.xMargins[0] + (playgroundWidth/2)
         player.y = playground.yMargins[1] - 24
+        Hearts[playerHealth].image = "1x1"
+        
+        # death sound
+        sounds.death.play()
+        
+        # i-frame mechanics
         invincibilityFrames = 100
     
     # game over
@@ -263,16 +271,19 @@ def update(dt):
 
     # part 1: mediocre random bullets and enemies
     if 1000 <= ticksSinceStart < 3000:
-        # for score measurement to not conflict with dialog skipping
+        # for score measurement to not conflict with dialog skipping, using
+        # separate timeSinceFight_s (based on startFighr) from timeSinceStart_s
         if ticksSinceStart == 1000:
             startFight = time.time()
 
+        # nth bullet startd falling at 4.5 speed in interval of 2 ticks
         nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
         
         # enemy behavior
         activeEnemies = 16
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
 
+    # update timing variables
     ticksSinceStart += 1
     timeSinceStart_s = time.time() - startLevel
     timeSinceFight_s = time.time() - startFight
