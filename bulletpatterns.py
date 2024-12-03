@@ -7,7 +7,7 @@ def straight_bullet(sprite, speed) -> None:
 
 # extended straight_bullet() with anti-out-of-bounds redundancy
 def update_straight_bullet(bullet, speed, playground) -> None:
-    if bullet.y < playground.yBorders[1] or bullet.image != "blank":
+    if bullet.y < playground.yBorders[1] or bullet.image != "1x1":
         straight_bullet(bullet, speed)
     # if out of bounds, nullify and reposition on y-axis
     else:
@@ -15,10 +15,10 @@ def update_straight_bullet(bullet, speed, playground) -> None:
         bullet.y = -20
 
 # use as nthBullet = random_straight_bullet(...) 
-def random_straight_bullet(Bullets, bulletCount, nthBullet, playground, speed, interval, ticksSinceStart):
+def random_straight_bullet(Bullets, bulletCount, nthBullet, image, playground, speed, interval, ticksSinceStart):
     # timing setup with interval
     if ticksSinceStart % interval == 0:
-        Bullets[nthBullet].image = "bullet-vertical"
+        Bullets[nthBullet].image = image
         nthBullet = (nthBullet + 1) % bulletCount
     
     # idea: bullets fall if they are not 1x1.png

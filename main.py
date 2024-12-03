@@ -100,6 +100,11 @@ for i in range(playerBulletCount):
     PlayerBullets.append(Actor("1x1"))
     PlayerBullets[i].pos = player.pos
 
+# extras from goodboxes
+plusC = Actor("1x1")
+plusC.x = menu.xMargins[1] - 50
+plusC.y = 250
+
 # set up bullets
 Bullets = []
 bulletCount = int(1024*2**(0))
@@ -143,10 +148,13 @@ for enemy01 in Enemies:
 
 # set up healing peppers
 pepperCount = 8
+pepperWidth = 30
+pepperHeight = 32
+nthPepper = 0
 Peppers = []
 
 for i in range(pepperCount):
-    Peppers.append(Actor("pepper"))
+    Peppers.append(Actor("1x1"))
     Peppers[i].x = randint(playground.xBorders[0], playground.xBorders[1])
 
 # overlay
@@ -165,6 +173,7 @@ def draw():
     playgroundImage.draw()
     menuBackground.draw()
     player.draw()
+    plusC.draw()
 
     # https://electronstudio.github.io/pygame-zero-book/chapters/shooter.html
     for bullet in Bullets:
@@ -202,6 +211,7 @@ def update(dt):
     global playerBulletWidth, playerBulletHeight, nthPlayerBullet, ticksSincePlayerShot
     global nthBullet
     global bossHealth
+    global nthPepper, nthPepper, pepperWidth, pepperHeight
     global startLevel, ticksSinceStart, timeSinceStart_s, startFight, timeSinceFight_s
     
     """UNIVERSAL MECHANICS"""
@@ -221,6 +231,15 @@ def update(dt):
     
     # killing enemies
     enemy_death(Enemies, enemy01Width, enemy01Height, PlayerBullets)
+
+    # healing pepper mechanics
+    for i in range(pepperCount):
+        if Peppers[i].x - pepperWidth/2 < player.x < Peppers[i].x + pepperWidth/2 and\
+        Peppers[i].y - pepperHeight/2 < player.y < Peppers[i].y + pepperHeight/2 and\
+        Peppers[i].image != "1x1":
+            Peppers[i].image = "1x1"
+            playerHealth += 1
+            plusC.image = "plus-c"
     
     # damaging boss
     bossHealth = boss_damage(boss, bossWidth, bossHeight, bossHealth, PlayerBullets)
@@ -243,7 +262,9 @@ def update(dt):
         playerHealth = death(Enemies, enemyCount, enemy01Width, enemy01Height, player, playerHealth)
         player.x = playground.xMargins[0] + (playgroundWidth/2)
         player.y = playground.yMargins[1] - 24
-        Hearts[playerHealth].image = "1x1"
+        
+        if playerHealth < 4:
+            Hearts[playerHealth].image = "1x1"
         
         # death sound
         sounds.death.play()
@@ -252,11 +273,11 @@ def update(dt):
         invincibilityFrames = 100
     
     # game over
-    if playerHealth == 0:
+    if playerHealth <= 0:
         print("???: Yay! Now you HAVE to play League!")
-        print("\nYou lost at " + str(timeSinceFight_s) + " s")
+        print("\nYou lost at " + str(int(timeSinceFight_s)) + " s")
         exit()
-
+    
     """STAGE PROGRESSION"""
     # part 0: dialogue
     if ticksSinceStart < 1000:
@@ -281,45 +302,47 @@ def update(dt):
             print("    Also, what's League, anyway?")
         if ticksSinceStart == 900:
             print("???: LEAGUE MY BALLS!")
+        
+        # set timeSinceFight to 0 before fight  
+        startFight = time.time()
 
     # part 1: mediocre random bullets and enemies
-    if 1010 <= ticksSinceStart < 3500:
+    if 1000 <= ticksSinceStart and timeSinceFight_s < 42:
         # for score measurement to not conflict with dialog skipping, using
         # separate timeSinceFight_s (based on startFighr) from timeSinceStart_s
-        if ticksSinceStart == 1010:
+        if ticksSinceStart == 1000:
             startFight = time.time()
 
             # Built-in Objects
             music.play('to-rizz-the-far-east')
-
+        
         # nth bullet startd falling at 4.5 speed in interval of 2 ticks
-        nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 2, ticksSinceStart)
+        nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, "bullet-vertical", playground, 4.5, 2, ticksSinceStart)
+
+        # rare healing pepper
+        nthPepper = random_straight_bullet(Peppers, pepperCount, nthPepper, "pepper", playground, 6, randint(1024, 4*1024), ticksSinceStart)
         
         # enemy behavior
         activeEnemies = 16
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
     # part 2: double the bullets and enemies
-    if 3500 < ticksSinceStart:
-        if ticksSinceStart == 3501:
+    if timeSinceFight_s > 42:
+        if int(timeSinceFight_s) == 43:
             sounds.death.play()
             for bullet in Bullets:
                 bullet.image = "1x1"
                 bullet.y = 0
 
-        # for score measurement to not conflict with dialog skipping, using
-        # separate timeSinceFight_s (based on startFighr) from timeSinceStart_s
-        if ticksSinceStart == 1010:
-            startFight = time.time()
-
-            # Built-in Objects
-            music.play('to-rizz-the-far-east')
-
-        # nth bullet startd falling at 4.5 speed in interval of 2 ticks
-        nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 1, ticksSinceStart)
+        # more frequent bullets
+        nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, "bullet-vertical", playground, 4.5, 1, ticksSinceStart)
         
+        # higher interval
+        nthPepper = random_straight_bullet(Peppers, pepperCount, nthPepper, "pepper", playground, 6, randint(1024, 8*1024), ticksSinceStart)
+
         # enemy behavior
         activeEnemies = 64
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
+
 
     # update timing variables
     ticksSinceStart += 1

@@ -97,8 +97,10 @@ def enemy_death(Enemies, enemyWidth, enemyHeight, PlayerBullets):
             enemy01.y - enemyHeight/2 < playerBullet.y < enemy01.y + enemyHeight/2 and \
             enemy01.image != "1x1" and playerBullet.image != "1x1":
                 enemy01.image = "1x1"
-                enemy01.y = -enemyHeight
                 playerBullet.image = "1x1"
+
+                # reposition enemy
+                enemy01.y = -enemyHeight
 
 # reduce boss health when hit;
 # use as bossHealth = boss_damage(...)
