@@ -141,6 +141,14 @@ for bullet in Bullets:
 for enemy01 in Enemies:
     BadHitbox.append(enemyCount)
 
+# set up healing peppers
+pepperCount = 8
+Peppers = []
+
+for i in range(pepperCount):
+    Peppers.append(Actor("pepper"))
+    Peppers[i].x = randint(playground.xBorders[0], playground.xBorders[1])
+
 # overlay
 Hearts = []
 for i in range(playerHealth):
@@ -167,6 +175,9 @@ def draw():
     
     for playerBullet in PlayerBullets:
         playerBullet.draw()
+
+    for pepper in Peppers:
+        pepper.draw()
     
     boss.draw()
 
@@ -286,6 +297,28 @@ def update(dt):
         
         # enemy behavior
         activeEnemies = 16
+        nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
+    # part 2: double the bullets and enemies
+    if 3500 < ticksSinceStart:
+        if ticksSinceStart == 3501:
+            sounds.death.play()
+            for bullet in Bullets:
+                bullet.image = "1x1"
+                bullet.y = 0
+
+        # for score measurement to not conflict with dialog skipping, using
+        # separate timeSinceFight_s (based on startFighr) from timeSinceStart_s
+        if ticksSinceStart == 1010:
+            startFight = time.time()
+
+            # Built-in Objects
+            music.play('to-rizz-the-far-east')
+
+        # nth bullet startd falling at 4.5 speed in interval of 2 ticks
+        nthBullet = random_straight_bullet(Bullets, bulletCount, nthBullet, playground, 4.5, 1, ticksSinceStart)
+        
+        # enemy behavior
+        activeEnemies = 64
         nthEnemy = random_enemy01(Enemies, enemyCount, nthEnemy, playground, ticksSinceStart)
 
     # update timing variables
