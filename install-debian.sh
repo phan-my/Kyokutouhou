@@ -1,1 +1,1 @@
-sudo apt-get install python3-pgzero -y
+apt-get install python3-pgzero -y
